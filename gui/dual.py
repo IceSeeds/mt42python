@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from gui.details import Detail
-from db.main import DBConnect
+from db.db import DBConnect
 
 class Main( tk.Frame ):
     def __init__( self, master, title="Template", width=500, height=500 ):
@@ -18,12 +18,6 @@ class Main( tk.Frame ):
         self.create_widgets()
 
     def create_widgets( self ):
-        """
-        self.button_new_win = ttk.Button( self )
-        self.button_new_win.configure(text="Open Window 2")
-        self.button_new_win.configure(command = self.new_window)
-        self.button_new_win.pack()
-        """
         self.left()
         self.right()
 
@@ -139,6 +133,7 @@ class Main( tk.Frame ):
         self.newWindow = tk.Toplevel( self.master )
         self.app2 = Detail( self.newWindow, data )
 
+"""
 def main():
     root = tk.Tk()
     app = Main( master=root, width=1000, height=500 )
@@ -146,3 +141,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+"""

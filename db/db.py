@@ -6,8 +6,7 @@ class DBConnect:
         self.connect()
 
     def connect( self ):
-        #self.con = sqlite3.connect( 'db/dairy.sqlite3' )
-        self.con = sqlite3.connect( 'db/test.sqlite3' )
+        self.con = sqlite3.connect( 'db/dairy.sqlite3' )
         self.cur = self.con.cursor()
 
     def end( self ):
@@ -70,7 +69,7 @@ class DBConnect:
             return False
     """
     def create( self ):
-        #self.cur.execute( "create table test( id integer primary key, text1 string, text2 string )" )
+        self.cur.execute( "create table test( id integer primary key, number integer, comment1 string, comment2 string, comment3 string, emotions string, rules string, prosess string )" )
         """
         self.cur.execute( 'create table dairy( \
                             id integer primary key,\
@@ -98,7 +97,7 @@ class DBConnect:
         for row in rows:
             print( row )
 
-db=DBConnect()
+#db=DBConnect()
 #db.create()
 #db.add()
 #db.get_all()

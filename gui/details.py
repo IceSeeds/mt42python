@@ -6,7 +6,7 @@ from tkinter.constants import W
 from typing import ValuesView
 from PIL import Image, ImageTk
 
-from db.main import DBConnect
+#from db.db import DBConnect
 
 class Detail( tk.Frame ):
     def __init__( self, master, data, title="Details", width=900, height=600 ):
@@ -16,29 +16,28 @@ class Detail( tk.Frame ):
         self.master.geometry( f"{width}x{height}" )
         self.master.title( title )
 
-        #self.data = data
-        #print( data )
-        self.data = (5, '2021.02.26 21:37:21', 91654980, 'USDJPY', 'SELL', 1.0, '2021.02.26 21:30:02', '2021.02.26 21:39:00', 106.900, 106.500, -200, 'img', 'true')
+        self.data = data
+        print( data )
+        #self.data = (5, '2021.02.26 21:37:21', 91654980, 'USDJPY', 'SELL', 1.0, '2021.02.26 21:30:02', '2021.02.26 21:39:00', 106.900, 106.500, -200, 'img', 'true')
         self.set_data()
 
         self.create_widgets()
 
 
-
     def set_data( self ):
-        self.db_number   = self.data[1]
-        self.add_time    = self.data[2]
-        self.number      = self.data[3]
-        self.symbol      = self.data[4]
-        self.type        = self.data[5]
-        self.lots        = self.data[6]
-        self.open_time   = self.data[7]
-        self.close_time  = self.data[8]
-        self.open_price  = self.data[9]
-        self.close_price = self.data[10]
-        self.profit      = self.data[11]
-        self.images      = self.data[12]
-        #self.closed      = self.data[13]
+        self.db_number   = self.data["1"]
+        self.add_time    = self.data["2"]
+        self.number      = self.data["3"]
+        self.symbol      = self.data["4"]
+        self.type        = self.data["5"]
+        self.lots        = self.data["6"]
+        self.open_time   = self.data["7"]
+        self.close_time  = self.data["8"]
+        self.open_price  = self.data["9"]
+        self.close_price = self.data["10"]
+        self.profit      = 0#self.data["11"]
+        self.images      = ""#self.data["12"]
+        self.closed      = ""#self.data[13]
         self.hold_time   = 0#self.get_hold_time()
         self.pips        = 0#self.get_pips()
 
@@ -88,11 +87,9 @@ class Detail( tk.Frame ):
         self.labelframe_radio = ttk.LabelFrame( self.frame_details, text = "radio", width=300, height=100 )
         self.labelframe_radio.propagate( False )
         self.labelframe_radio.place( x=5, y=150 )
-        #self.view_radio()
-        self.view_spin()
+        self.view_radio()
 
         self.command_button()
-        #print( self.data )
     
     def command_button( self ):
         self.menubar = tk.Menu( self.master )
@@ -114,15 +111,6 @@ class Detail( tk.Frame ):
     def edit_all( self ):
         print( "comming sooon" )
     
-    def view_spin( self ):
-        val = StringVar()
-        val.set('0')
-        self.radio1 = ttk.Spinbox( self.labelframe_radio, format="%d",textvariable=val, from_=0, increment=1 )
-        self.radio1.pack()
-        self.radio2 = ttk.Spinbox( self.labelframe_radio, format="%d",textvariable=val, from_=0, increment=1 )
-        self.radio2.pack()
-        self.radio3 = ttk.Spinbox( self.labelframe_radio, format="%d",textvariable=val, from_=0, increment=1 )
-        self.radio3.pack()
     def view_radio( self ):
         #https://suzutaka-programming.com/tkinter-ttk-radiobutton-value-variable/
         self.radio_item = StringVar()
@@ -145,8 +133,8 @@ class Detail( tk.Frame ):
         self.text_comment_1.delete( 1.0, tk.END )
         self.text_comment_2.delete( 1.0, tk.END )
         #print( com1 )
-        db = DBConnect()
-        db.com_add( sendDB )
+        #db = DBConnect()
+        #db.com_add( sendDB )
 
     def view_comment( self ):
         self.text_comment_1 = tk.Text( self. labelframe_comment, width=50 )
