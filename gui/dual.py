@@ -2,7 +2,7 @@ from os import close
 import tkinter as tk
 from tkinter import ttk
 
-from gui.details import Detail
+from gui.details import Details
 from db.db import DBConnect
 
 class Main( tk.Frame ):
@@ -14,6 +14,8 @@ class Main( tk.Frame ):
         self.master.title( title )
 
         self.db = DBConnect()
+
+        self.mode = "all"
 
         self.create_widgets()
 
@@ -51,6 +53,7 @@ class Main( tk.Frame ):
         self.button_cure.pack()
 
     def right( self ):
+        self.mode = "all"
         #Frame
         self.frame_list = ttk.Frame( width=900, height=600, relief="groove" )
         self.frame_list.propagate( False )
@@ -58,9 +61,10 @@ class Main( tk.Frame ):
 
         self.tree = ttk.Treeview( self.frame_list )
         self.tree_init()
-        self.tree_update( mode="all" )
+        self.tree_update()
 
     def on_button_open( self ):
+        self.mode = "false"
         #Frame
         self.frame_open = ttk.Frame( width=900, height=600, relief="groove" )
         self.frame_open.propagate( False )
@@ -68,9 +72,10 @@ class Main( tk.Frame ):
 
         self.tree = ttk.Treeview( self.frame_open )
         self.tree_init()
-        self.tree_update( mode="false" )
+        self.tree_update()
     
     def on_button_close( self ):
+        self.mode = "true"
         #Frame
         self.frame_close = ttk.Frame( width=900, height=600, relief="groove" )
         self.frame_close.propagate( False )
@@ -78,11 +83,11 @@ class Main( tk.Frame ):
 
         self.tree = ttk.Treeview( self.frame_close )
         self.tree_init()
-        self.tree_update( mode="true" )
+        self.tree_update()
         
 
-    def tree_update( self, mode ):
-        result = self.db.get( closed = mode )
+    def tree_update( self ):
+        result = self.db.get( closed = self.mode )
         for item in result:
             self.add_tree( item )
             #print( item )
@@ -131,7 +136,7 @@ class Main( tk.Frame ):
 
     def new_window( self, data ):
         self.newWindow = tk.Toplevel( self.master )
-        self.app2 = Detail( self.newWindow, data )
+        self.app2 = Details( self.newWindow, data, self.mode )
 
 """
 def main():

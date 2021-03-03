@@ -34,9 +34,24 @@ class DBConnect:
         rows = self.cur.fetchall()
         for row in rows:
             result.append( row )
+            #print( row )
+        return result    
+
+    def get_select( self, number, mode, item ):
+        result = []
+
+        if mode == "all":
+            self.cur.execute( "select " + item + " from dairy where number = '" + number + "'" )
+        else:
+            self.cur.execute( "select " + item + " from dairy where number = '" + number + "' and closed = '" + mode + "'" )
+            
+        rows = self.cur.fetchall()
+        for row in rows:
+            result.append( row )
             print( row )
 
-        return result    
+        return result
+
 
     def add( self, data ):
         self.connect()
@@ -48,9 +63,6 @@ class DBConnect:
             print( "重複" )
 
         self.end()
-
-    def update( self ):
-        pass
     
     def duplicate_sarch( self, data ):
         self.cur.execute( "select number, closed from dairy where number = '" + data[1] + "' and closed = '" + data[11] + "'" )
@@ -59,18 +71,20 @@ class DBConnect:
         else:
             return False
 
-    """
-    def is_exist_url( target ):
-        sql = 'SELECT app_url FROM apps WHERE app_url ="' + target + '"'
-        cur = conn.execute(sql)
-        if len(cur.fetchall()):
-            return True
-        else:
-            return False
-    """
+    def update( self ):
+        pass
+
     def create( self ):
-        self.cur.execute( "create table test( id integer primary key, number integer, comment1 string, comment2 string, comment3 string, emotions string, rules string, prosess string )" )
-        """
+        self.cur.execute( "create table details( \
+                            id integer primary key,\
+                            number integer, \
+                            comment1 string, \
+                            comment2 string, \
+                            comment3 string, \
+                            emotions string, \
+                            rules string, \
+                            prosess string )" )
+
         self.cur.execute( 'create table dairy( \
                             id integer primary key,\
                             addtime datetime,\
@@ -85,20 +99,22 @@ class DBConnect:
                             profit integer,\
                             images string,\
                             closed string )' )
-        """
-    def com_add( self, data ):
-        self.connect()
-        self.cur.execute( "insert into test( text1, text2 ) values ( ?, ? )", data )
-        self.end()
-    def com_get( self ):
-        
-        self.cur.execute( "select * from test" )
+
+    def join( self ):
+        result = []
+
+        self.cur.execute( "select * from dairy left outer join details on dairy.number = details.number" )
         rows = self.cur.fetchall()
         for row in rows:
+            result.append( row )
             print( row )
-
+        #print( result )
+        return result
+        
 #db=DBConnect()
+#db.join()
 #db.create()
 #db.add()
 #db.get_all()
 #db.com_get()
+#db.get_select("91655040","all","profit")
