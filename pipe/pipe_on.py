@@ -3,43 +3,41 @@ import win32file
 
 from db.db import DBConnect
 
-def main():
-    print("ok@pipe?")
+class Pipe_mt4_2_python():
+    def __init__( self ):
+        print( "__init__" )
+        self.pipe_name = "KEG_Pipe_Dairy"
+        ## 名前付きパイプの作成
+        self.pipe = win32pipe.CreateNamedPipe(
+            r'//./pipe/' + self.pipe_name,
+            win32pipe.PIPE_ACCESS_DUPLEX,
+            win32pipe. PIPE_TYPE_BYTE | win32pipe.PIPE_READMODE_BYTE | win32pipe.PIPE_WAIT,
+            1, 256, 256, 0, None)
+        
+        self.db = DBConnect()
 
-    str_pipeName = "KEG_Pipe_Dairy"
+    def connecting( self ):
+        print( "connecting..." )
+        # クライアントの接続を待つ
+        win32pipe.ConnectNamedPipe( self.pipe, None )
+        print( "connect complete!!" )
+        return True
 
-    # 名前付きパイプの作成
-    pipe = win32pipe.CreateNamedPipe(
-        r'//./pipe/' + str_pipeName,
-        win32pipe.PIPE_ACCESS_DUPLEX,
-        win32pipe. PIPE_TYPE_BYTE | win32pipe.PIPE_READMODE_BYTE | win32pipe.PIPE_WAIT,
-        1, 256, 256, 0, None)
+    def roop( self ):
+        result = ""
+        while True:
+            # パイプから 1 文字読み取って
+            hr, c = win32file.ReadFile( self.pipe, 1 )
+            # 表示する
+            if c.decode() != "@":
+                result += c.decode()
+            else:
+                print( result )
+                result_split = result.split( "#" )
+                result = ""
+                self.db.add( result_split )
 
-    print("ok?")
-
-    # クライアントの接続を待つ
-    win32pipe.ConnectNamedPipe(pipe, None)
-    print("ok")
-
-    result = ""
-
-    db = DBConnect()
-
-    # 無限ループ
-    while True:
-        # パイプから 1 文字読み取って
-        hr, c = win32file.ReadFile(pipe, 1)
-        # 表示する
-        #print(c.decode(), end='')
-        if c.decode() != "@":
-            result += c.decode()
-        else:
-            print( result )
-            result_split = result.split( "#" )
-            result = ""
-            db.add( result_split )
-            #for item in result_split:
-            #    print( item )
+                return result_split
 
 
 #Tkinter ... GUI

@@ -8,7 +8,7 @@ from gui.edit import DetailsEdit as edit
 from gui.view import DetailsView as view
 
 class Details( tk.Frame ):
-    def __init__( self, master, data, closed, title="Details", width=900, height=600 ):
+    def __init__( self, master, data, closed, where_view="main", title="Details", width=900, height=600 ):
         super().__init__( master )
         self.pack()
 
@@ -21,42 +21,57 @@ class Details( tk.Frame ):
         self.edit = edit()
 
         self.data = data
-        self.mode = "view"
+        self.mode = "edit"
         self.closed = closed
 
-        self.set_data()
+        self.set_data( where_view )
 
         self.create_widgets()
 
-    def set_data( self ):
-        self.db_number   = self.data["1"]
-        self.add_time    = self.data["2"]
-        self.number      = self.data["3"]
-        self.symbol      = self.data["4"]
-        self.type        = self.data["5"]
-        self.lots        = self.data["6"]
-        self.open_time   = self.data["7"]
-        self.close_time  = self.data["8"]
-        self.open_price  = self.data["9"]
-        self.close_price = self.data["10"]
-        self.profit      = self.db.get_select( self.number, self.closed, "profit" )[0]
-        self.images      = self.db.get_select( self.number, self.closed, "images" )[0]
-        self.hold_time   = 0#self.get_hold_time()
-        self.pips        = 0#self.get_pips()
+    def set_data( self, view ):
+        if view == "main":
+            self.db_number   = self.data["1"]
+            self.add_time    = self.data["2"]
+            self.number      = self.data["3"]
+            self.symbol      = self.data["4"]
+            self.type        = self.data["5"]
+            self.lots        = self.data["6"]
+            self.open_time   = self.data["7"]
+            self.close_time  = self.data["8"]
+            self.open_price  = self.data["9"]
+            self.close_price = self.data["10"]
+            self.profit      = self.db.get_select( self.number, self.closed, "profit" )[0]
+            self.images      = self.db.get_select( self.number, self.closed, "images" )[0]
+            self.hold_time   = self.get_hold_time()
+            self.pips        = self.get_pips()
+        elif view == "order":
+            self.db_number   = self.data[1]
+            self.add_time    = self.data[2]
+            self.number      = self.data[3]
+            self.symbol      = self.data[4]
+            self.type        = self.data[5]
+            self.lots        = self.data[6]
+            self.open_time   = self.data[7]
+            self.close_time  = self.data[8]
+            self.open_price  = self.data[9]
+            self.close_price = self.data[10]
+            self.profit      = 0#self.db.get_select( self.number, self.closed, "profit" )[0]
+            self.images      = 0#self.db.get_select( self.number, self.closed, "images" )[0]
+            self.hold_time   = 0#self.get_hold_time()
+            self.pips        = 0#self.get_pips()
 
     def get_hold_time( self ):
         open  = dt.strptime( self.open_time,  '%Y.%m.%d %H:%M:%S' )
         close = dt.strptime( self.close_time, '%Y.%m.%d %H:%M:%S' )
         time = close - open
-        #print( time )
         return time
 
     def get_pips( self ):
         price = 0
         if self.type == "SELL":
-            price = self.open_price - self.close_price
+            price = float( self.open_price )  - float( self.close_price )
         else:
-            price = self.close_price - self.open_price
+            price = float( self.close_price ) - float( self.open_price )
         
         price = round( price, 3 ) * 100
         return price
@@ -101,37 +116,35 @@ class Details( tk.Frame ):
         self.labelframe_base = ttk.LabelFrame( self.frame_details, text = "base", width=500, height=200 )
         self.labelframe_base.propagate( False )
         self.labelframe_base.place( x=5, y=1 )
-        #self.view_base()
 
         #LabelFrame
         self.labelframe_time = ttk.LabelFrame( self.frame_details, text = "時間", width=500, height=200 )
         self.labelframe_time.propagate( False )
         self.labelframe_time.place( x=200, y=1 )
-        #self.view_time()
 
         #LabelFrame
         self.labelframe_price = ttk.LabelFrame( self.frame_details, text = "価格", width=500, height=200 )
         self.labelframe_price.propagate( False )
         self.labelframe_price.place( x=400, y=1 )
-        #self.view_price()
 
         #LabelFrame
         self.labelframe_image = ttk.LabelFrame( self.frame_details, text = "画像", width=500, height=200 )
         self.labelframe_image.propagate( False )
         self.labelframe_image.place( x=550, y=1 )
-        #self.view_image()
-
-        #LabelFrame
-        self.labelframe_comment = ttk.LabelFrame( self.frame_details, text = "コメント", width=890, height=250 )
-        self.labelframe_comment.propagate( False )
-        self.labelframe_comment.place( x=5, y=300 )
-        #self.view_comment()
 
         #LabelFrame
         self.labelframe_radio = ttk.LabelFrame( self.frame_details, text = "radio", width=300, height=100 )
         self.labelframe_radio.propagate( False )
         self.labelframe_radio.place( x=5, y=150 )
-        #self.view_radio()
+
+        #LabelFrame
+        self.labelframe_comment = ttk.LabelFrame( self.frame_details, text = "コメント", width=890, height=250 )
+        self.labelframe_comment.propagate( False )
+        self.labelframe_comment.place( x=5, y=300 )
+
+        #LabelFrame
+        self.labelframe_send = ttk.LabelFrame( self.frame_details, width=100, height=30 )
+        self.labelframe_send.place( x = 795, y = 545 )
 
     
     def view_all( self ):
@@ -143,18 +156,12 @@ class Details( tk.Frame ):
         self.view.comment( self.labelframe_comment )
 
     def edit_all( self ):
-        pass
+        self.edit.comment( self.labelframe_comment )
+        self.edit.send( self.labelframe_send )
 
-"""
-#Debug
-def main():
-    root = tk.Tk()
-    app = Details( master=root, data = {} )
-    app.mainloop()
-
-if __name__ == "__main__":
-    main()
-"""
+    def send( self ):
+        print( "a" )
+        
 
 #radiobutton
 #感情
