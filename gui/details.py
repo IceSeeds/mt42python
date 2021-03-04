@@ -1,10 +1,7 @@
 from datetime import datetime as dt
 
 import tkinter as tk
-from tkinter import StringVar, Variable, ttk
-from tkinter.constants import W
-from typing import ValuesView
-from PIL import Image, ImageTk
+from tkinter import ttk
 
 from db.db import DBConnect
 from gui.edit import DetailsEdit as edit

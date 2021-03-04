@@ -48,7 +48,7 @@ class DBConnect:
         rows = self.cur.fetchall()
         for row in rows:
             result.append( row )
-            print( row )
+            #print( row )
 
         return result
 
