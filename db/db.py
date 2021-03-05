@@ -35,7 +35,7 @@ class DBConnect:
         for row in rows:
             result.append( row )
             #print( row )
-        return result    
+        return result
 
     def get_select( self, number, mode, item ):
         result = []
@@ -52,6 +52,16 @@ class DBConnect:
 
         return result
 
+    def add_comment( self, data ):
+        self.connect()
+        if not self.duplicate_sarch( data, mode="comment" ):
+            self.cur.execute( "insert into details( number, closed, comment1, comment2, comment3 ) values( ?, ?, ?, ?, ? )", data )
+        else:
+            print( "重複" )
+            self.end()
+            return False
+
+        self.end()
 
     def add( self, data ):
         self.connect()
@@ -61,11 +71,17 @@ class DBConnect:
                                values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )", data )
         else:
             print( "重複" )
+            self.end()
+            return False
 
         self.end()
     
-    def duplicate_sarch( self, data ):
-        self.cur.execute( "select number, closed from dairy where number = '" + data[1] + "' and closed = '" + data[11] + "'" )
+    def duplicate_sarch( self, data, mode="info" ):
+        if mode == "info":
+            self.cur.execute( "select number, closed from dairy where number = '" + data[1] + "' and closed = '" + data[11] + "'" )
+        elif mode == "comment":
+            self.cur.execute( "select number, closed from details where number = '" + data[1] + "' and closed = '" + data[11] + "'" )
+        
         if len( self.cur.fetchall() ):
             return True
         else:
@@ -78,6 +94,7 @@ class DBConnect:
         self.cur.execute( "create table details( \
                             id integer primary key,\
                             number integer, \
+                            closed string, \
                             comment1 string, \
                             comment2 string, \
                             comment3 string, \

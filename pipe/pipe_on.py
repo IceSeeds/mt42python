@@ -35,7 +35,8 @@ class Pipe_mt4_2_python():
                 print( result )
                 result_split = result.split( "#" )
                 result = ""
-                self.db.add( result_split )
+                if self.db.add( result_split ) == False:
+                    return False
 
                 return result_split
 

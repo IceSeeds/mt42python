@@ -32,6 +32,5 @@ class DetailsEdit():
         self.button_send.pack()
 
     def press( self ):
-        self.db.update()
-
-
+        #self.db.add_comment( data )
+        pass

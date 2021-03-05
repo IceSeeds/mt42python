@@ -45,22 +45,27 @@ class Details( tk.Frame ):
             self.hold_time   = self.get_hold_time()
             self.pips        = self.get_pips()
         elif view == "order":
-            self.db_number   = self.data[1]
-            self.add_time    = self.data[2]
-            self.number      = self.data[3]
-            self.symbol      = self.data[4]
-            self.type        = self.data[5]
-            self.lots        = self.data[6]
-            self.open_time   = self.data[7]
-            self.close_time  = self.data[8]
-            self.open_price  = self.data[9]
-            self.close_price = self.data[10]
-            self.profit      = 0#self.db.get_select( self.number, self.closed, "profit" )[0]
-            self.images      = 0#self.db.get_select( self.number, self.closed, "images" )[0]
-            self.hold_time   = 0#self.get_hold_time()
-            self.pips        = 0#self.get_pips()
+            self.db_number   = 0#self.data[1]
+            self.add_time    = self.data[0]
+            self.number      = self.data[1]
+            self.symbol      = self.data[2]
+            self.type        = self.data[3]
+            self.lots        = self.data[4]
+            self.open_time   = self.data[5]
+            self.close_time  = self.data[6]
+            self.open_price  = self.data[7]
+            self.close_price = self.data[8]
+            self.profit      = self.data[9]
+            self.images      = self.data[10]
+            self.hold_time   = self.get_hold_time()
+            self.pips        = self.get_pips()
+        else:
+            print( "Error" )
 
     def get_hold_time( self ):
+        if self.close_time == "1970.01.01 00:00:00":
+            self.close_time = self.open_time
+            
         open  = dt.strptime( self.open_time,  '%Y.%m.%d %H:%M:%S' )
         close = dt.strptime( self.close_time, '%Y.%m.%d %H:%M:%S' )
         time = close - open
@@ -156,12 +161,13 @@ class Details( tk.Frame ):
         self.view.comment( self.labelframe_comment )
 
     def edit_all( self ):
+        self.view.base( self.labelframe_base, self.number, self.symbol, self.type, self.lots )
+        self.view.time( self.labelframe_time, self.open_time, self.close_time, self.hold_time )
+        self.view.price( self.labelframe_price, self.open_price, self.close_price, self.pips )
+        #狩り。
         self.edit.comment( self.labelframe_comment )
         self.edit.send( self.labelframe_send )
 
-    def send( self ):
-        print( "a" )
-        
 
 #radiobutton
 #感情
